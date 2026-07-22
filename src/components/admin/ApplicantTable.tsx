@@ -299,9 +299,10 @@ export default function ApplicantTable({
     if (app.status === "approved") {
       message = `Hello ${app.name} 👋,
 
-Congratulations! You have been appointed as *${app.approvedRole || app.priority1}* in the *CSI KARE Student Branch* for the academic year 2026-2027.
+Congratulations once again! You have been appointed as *${app.approvedRole || app.priority1}* in the *CSI KARE Student Branch* for the academic year 2026-2027.
 
-The official Appointment Order reference number has been sent to your college email address.
+You can download your official PDF Appointment Letter directly using the link below:
+${window.location.origin}/api/download-letter?id=${app.id}
 
 Regards,
 CSI KARE STUDENT BRANCH`;
