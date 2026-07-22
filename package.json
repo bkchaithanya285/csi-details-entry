@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@next/swc-win32-x64-msvc": "16.2.11",
     "canvas-confetti": "^1.9.4",
     "firebase": "^12.16.0",
     "firebase-admin": "^14.2.0",
@@ -21,6 +20,9 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "xlsx": "^0.18.5"
+  },
+  "optionalDependencies": {
+    "@next/swc-win32-x64-msvc": "16.2.11"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
