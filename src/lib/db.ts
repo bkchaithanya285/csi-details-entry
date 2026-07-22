@@ -62,6 +62,28 @@ export async function submitApplicant(data: any) {
     throw new Error("Database not initialized");
   }
 
+  const role = data.priority1 || "";
+  const roleLimit = ROLE_LIMITS[role] || Infinity;
+
+  if (role) {
+    const countSnapshot = await adminDb.collection("Applicants")
+      .where("status", "==", "approved")
+      .get();
+      
+    let approvedCount = 0;
+    countSnapshot.docs.forEach((d: any) => {
+      const dData = d.data();
+      const dRole = dData.approvedRole || dData.priority1;
+      if (dRole === role) {
+        approvedCount++;
+      }
+    });
+
+    if (approvedCount >= roleLimit) {
+      throw new Error(`The position for '${role}' is already fully appointed and filled.`);
+    }
+  }
+
   const payload = {
     name: data.name.trim(),
     registrationNumber: data.registrationNumber.trim().toUpperCase(),
@@ -136,12 +158,29 @@ export async function updateApplicantStatus(id: string, newStatus: "pending" | "
   }
 }
 
-/**
- * Approves an applicant with a specific role, updates status, generates a reference number, and emails them.
- */
 export async function approveApplicantWithRole(id: string, role: string) {
   if (!adminDb) throw new Error("Database not initialized");
   try {
+    // Enforce seat limit check
+    const roleLimit = ROLE_LIMITS[role] || Infinity;
+    const countSnapshot = await adminDb.collection("Applicants")
+      .where("status", "==", "approved")
+      .get();
+      
+    let approvedCount = 0;
+    countSnapshot.docs.forEach((d: any) => {
+      if (d.id === id) return; // skip self
+      const dData = d.data();
+      const dRole = dData.approvedRole || dData.priority1;
+      if (dRole === role) {
+        approvedCount++;
+      }
+    });
+
+    if (approvedCount >= roleLimit) {
+      throw new Error(`The position for '${role}' has reached its capacity limit of ${roleLimit}. Cannot appoint more.`);
+    }
+
     const docRef = adminDb.collection("Applicants").doc(id);
     const doc = await docRef.get();
     
@@ -190,7 +229,39 @@ export async function approveApplicantWithRole(id: string, role: string) {
 export async function updateApplicant(id: string, data: Partial<Applicant>) {
   if (!adminDb) throw new Error("Database not initialized");
   try {
-    await adminDb.collection("Applicants").doc(id).update(data);
+    const docRef = adminDb.collection("Applicants").doc(id);
+    const doc = await docRef.get();
+    if (!doc.exists) {
+      throw new Error("Applicant not found");
+    }
+
+    const currentData = doc.data()!;
+    const isApproved = currentData.status === "approved" || data.status === "approved";
+    const newRole = data.approvedRole || data.priority1;
+
+    // Only validate seat limits if the candidate is approved
+    if (isApproved && newRole) {
+      const roleLimit = ROLE_LIMITS[newRole] || Infinity;
+      const countSnapshot = await adminDb.collection("Applicants")
+        .where("status", "==", "approved")
+        .get();
+        
+      let approvedCount = 0;
+      countSnapshot.docs.forEach((d: any) => {
+        if (d.id === id) return; // skip self
+        const dData = d.data();
+        const dRole = dData.approvedRole || dData.priority1;
+        if (dRole === newRole) {
+          approvedCount++;
+        }
+      });
+
+      if (approvedCount >= roleLimit) {
+        throw new Error(`The position for '${newRole}' has reached its capacity limit of ${roleLimit}. Cannot assign.`);
+      }
+    }
+
+    await docRef.update(data);
     return { success: true };
   } catch (error) {
     console.error("Error updating applicant:", error);
