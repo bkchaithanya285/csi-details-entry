@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CSI KARE Student Member Registry Portal
 
-## Getting Started
+A premium, highly secure student member details registry portal for the Computer Society of India (CSI) student branch at Kalasalingam Academy of Research and Education. Built with Next.js (App Router), TypeScript, Tailwind CSS, Firebase, and Brevo SMTP relay.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 One-Click Deployment to Vercel
+
+The easiest way to deploy this portal is to link your GitHub repository to [Vercel](https://vercel.com).
+
+### Step-by-Step Guide:
+
+1. Go to [Vercel Dashboard](https://vercel.com/new) and click **Import** next to your `csi-details-entry` repository.
+2. Under **Framework Preset**, select **Next.js**.
+3. Under **Build and Development Settings**, you can keep the defaults. (The build command `npm run build` will execute webpack compilation successfully).
+4. Expand the **Environment Variables** section and copy-paste the variables from your local `.env.local` file:
+
+```env
+# Brevo SMTP Configuration
+SMTP_HOST=smtp-relay.brevo.com
+SMTP_PORT=587
+SMTP_USER=klucsi@klu.ac.in
+SMTP_PASS=xkeysib-your-actual-api-key-here
+SENDER_EMAIL=klucsi@klu.ac.in
+SENDER_NAME=CSI KARE Student Branch
+
+# Firebase Admin SDK credentials
+FIREBASE_PROJECT_ID=csi-appointement
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk-fbsvc@csi-appointement.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nyour-actual-private-key-here..."
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> ⚠️ **IMPORTANT**: Make sure the `FIREBASE_PRIVATE_KEY` environment variable on Vercel includes the quote marks and standard `\n` characters to ensure the Firebase Admin SDK can parse the private key safely!
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+5. Click **Deploy**. Vercel will build, optimize, and launch your live URL in under 2 minutes.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🔒 Security Measures
+- Private variables and Firebase key files are explicitly ignored via `.gitignore` to prevent leaks.
+- Student registry route `/status` has been removed. All administrative actions (approving, editing, generating letters, and mailing orders) happen strictly inside the secure `/admin` control panel.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ⚙️ Administration
+- **Control panel URL**: `https://your-domain.vercel.app/admin`
+- **Username**: `admin`
+- **Password**: `Tony@285`
