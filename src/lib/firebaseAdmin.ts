@@ -1,7 +1,5 @@
-import admin from "firebase-admin";
 import { getApps, initializeApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
-import { getAuth } from "firebase-admin/auth";
 import fs from "fs";
 import path from "path";
 
@@ -68,14 +66,11 @@ if (!getApps().length) {
 }
 
 let adminDb: any = null;
-let adminAuth: any = null;
 
 try {
   adminDb = getApps().length ? getFirestore() : null;
-  adminAuth = getApps().length ? getAuth() : null;
 } catch (initError) {
-  console.error("Error retrieving Firestore or Auth instances:", initError);
+  console.error("Error retrieving Firestore instance:", initError);
 }
 
-export { admin, adminDb, adminAuth };
-export default admin;
+export { adminDb };

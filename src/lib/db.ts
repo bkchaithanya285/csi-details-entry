@@ -1,7 +1,6 @@
 "use server";
 
 import { adminDb } from "./firebaseAdmin";
-import admin from "firebase-admin";
 import { sendEmail, getSubmissionEmailHtml, getSelectionEmailHtml } from "./email";
 import { ROLE_LIMITS } from "./constants";
 
