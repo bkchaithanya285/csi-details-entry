@@ -16,10 +16,14 @@ if (!getApps().length) {
       process.env.FIREBASE_CLIENT_EMAIL &&
       process.env.FIREBASE_PRIVATE_KEY
     ) {
+      let privateKey = process.env.FIREBASE_PRIVATE_KEY.trim();
+      if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+        privateKey = privateKey.substring(1, privateKey.length - 1);
+      }
       serviceAccount = {
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+        projectId: process.env.FIREBASE_PROJECT_ID.trim(),
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL.trim(),
+        privateKey: privateKey.replace(/\\n/g, "\n"),
       };
       console.log("Firebase Admin SDK credentials loaded from Environment Variables.");
     } 
@@ -63,8 +67,15 @@ if (!getApps().length) {
   }
 }
 
-const adminDb = getApps().length ? getFirestore() : null;
-const adminAuth = getApps().length ? getAuth() : null;
+let adminDb: any = null;
+let adminAuth: any = null;
+
+try {
+  adminDb = getApps().length ? getFirestore() : null;
+  adminAuth = getApps().length ? getAuth() : null;
+} catch (initError) {
+  console.error("Error retrieving Firestore or Auth instances:", initError);
+}
 
 export { admin, adminDb, adminAuth };
 export default admin;
