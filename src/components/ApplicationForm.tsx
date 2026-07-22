@@ -205,7 +205,9 @@ export default function ApplicationForm() {
 
     } catch (err: any) {
       console.error(err);
-      addToast("Failed to submit information. Please try again.", "error");
+      // Show the actual server error (e.g. position filled) if available
+      const msg = err?.message || "Failed to submit information. Please try again.";
+      addToast(msg, "error");
     } finally {
       setLoading(false);
     }
@@ -440,23 +442,37 @@ export default function ApplicationForm() {
 
           {/* Submission Button */}
           <div className="border-t border-white/5 pt-6 select-none">
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-extrabold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-amber-950/50 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            >
-              {loading ? (
+            {(() => {
+              const selectedCount = roleCounts[assignedRole] || 0;
+              const selectedLimit = ROLE_LIMITS[assignedRole] || Infinity;
+              const isSelectedRoleFilled = selectedCount >= selectedLimit;
+              return (
                 <>
-                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                  <span>Submitting Entry...</span>
+                  {isSelectedRoleFilled && (
+                    <p className="text-red-400 text-xs font-bold text-center mb-3 animate-pulse">
+                      ⚠ The position for &quot;{assignedRole}&quot; is already fully appointed. Please select another role.
+                    </p>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={loading || isSelectedRoleFilled}
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-extrabold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-amber-950/50 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    {loading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                        <span>Submitting Entry...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4" />
+                        <span>Submit Details</span>
+                      </>
+                    )}
+                  </button>
                 </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4" />
-                  <span>Submit Details</span>
-                </>
-              )}
-            </button>
+              );
+            })()}
           </div>
         </div>
 
