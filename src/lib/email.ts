@@ -354,7 +354,7 @@ export async function getSelectionEmailHtml({ id, name, role }: SelectionEmailPa
                   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 10px 0;">
                     <tr>
                       <td align="center">
-                        <a href="${baseUrl}/status" target="_blank" style="display: inline-block; background-color: #1e3a8a; color: #ffffff !important; text-decoration: none; padding: 15px 30px; font-size: 13px; font-weight: 700; border-radius: 8px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.25);">Download Official Letter</a>
+                        <a href="${baseUrl}/api/download-letter?id=${id}" target="_blank" style="display: inline-block; background-color: #1e3a8a; color: #ffffff !important; text-decoration: none; padding: 15px 30px; font-size: 13px; font-weight: 700; border-radius: 8px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.25);">⬇ Download Official Letter (PDF)</a>
                       </td>
                     </tr>
                   </table>
