@@ -324,9 +324,9 @@ export async function getSelectionEmailHtml({ id, name, role }: SelectionEmailPa
                   
                   <p style="font-size: 14.5px; color: #0f172a; margin: 0 0 15px 0;">Dear <strong>${name}</strong>,</p>
                   
-                  <p style="font-size: 14.5px; color: #475569; margin: 0 0 20px 0; line-height: 1.6; text-align: justify;">Based on your credentials and the evaluation checks conducted by the CSI KARE Faculty Team, we are pleased to inform you that you have been selected as a core team member of the **CSI KARE Student Branch** for the academic year 2026-2027.</p>
+                  <p style="font-size: 14.5px; color: #475569; margin: 0 0 20px 0; line-height: 1.6; text-align: justify;">We are delighted to inform you that you have been <strong>selected</strong> as a Core Team Member of the <strong>CSI KARE Student Branch</strong> for the academic year <strong>2026–2027</strong>. Congratulations on this well-deserved achievement! 🎉</p>
                   
-                  <p style="font-size: 14.5px; color: #475569; margin: 0 0 20px 0; line-height: 1.6;">You are hereby appointed to the following position with immediate effect:</p>
+                  <p style="font-size: 14.5px; color: #475569; margin: 0 0 20px 0; line-height: 1.6;">You are hereby officially appointed to the following position:</p>
                   
                   <!-- Appointment Details Card -->
                   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #cbd5e1; border-radius: 10px; margin: 25px 0; border-collapse: collapse;">
@@ -348,18 +348,18 @@ export async function getSelectionEmailHtml({ id, name, role }: SelectionEmailPa
                     </tr>
                   </table>
                   
-                  <p style="font-size: 14.5px; color: #475569; margin: 0 0 25px 0; line-height: 1.6; text-align: justify;">Your official, high-resolution, print-ready PDF appointment letter signed by the Faculty-in-Charge has been generated and is attached to this email. You can also view and download it directly from the portal at any time.</p>
+                  <p style="font-size: 14.5px; color: #475569; margin: 0 0 25px 0; line-height: 1.6; text-align: justify;">Your official appointment letter has been generated and is ready to download. Click the button below to get your PDF letter signed by the Faculty Incharge.</p>
                   
                   <!-- CTA Button -->
                   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 10px 0;">
                     <tr>
                       <td align="center">
-                        <a href="${baseUrl}/api/download-letter?id=${id}" target="_blank" style="display: inline-block; background-color: #1e3a8a; color: #ffffff !important; text-decoration: none; padding: 15px 30px; font-size: 13px; font-weight: 700; border-radius: 8px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.25);">⬇ Download Official Letter (PDF)</a>
+                        <a href="${baseUrl}/api/download-letter?id=${id}" target="_blank" style="display: inline-block; background-color: #1e3a8a; color: #ffffff !important; text-decoration: none; padding: 15px 30px; font-size: 13px; font-weight: 700; border-radius: 8px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.25);">⬇ Download Appointment Letter (PDF)</a>
                       </td>
                     </tr>
                   </table>
                   
-                  <p style="font-size: 14.5px; color: #475569; margin: 0 0 20px 0; line-height: 1.6; text-align: justify;">Congratulations on your selection! We look forward to your active contribution, leadership, and technical excellence in making this academic year full of successful workshops and events.</p>
+                  <p style="font-size: 14.5px; color: #475569; margin: 0 0 20px 0; line-height: 1.6; text-align: justify;">We look forward to a wonderful year of technical events, workshops, and leadership with you on board. Welcome to the team! 🚀</p>
                   
                   <!-- Closing Regards -->
                   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 30px; border-collapse: collapse;">

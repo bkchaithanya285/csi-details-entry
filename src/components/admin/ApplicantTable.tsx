@@ -15,6 +15,7 @@ import {
   AlertCircle,
   Edit,
   Mail,
+  MailCheck,
   FileText,
   Save,
   X
@@ -202,6 +203,29 @@ export default function ApplicantTable({
     } catch (error) {
       console.error("Individual email dispatch error:", error);
       addToast("Failed to dispatch appointment email. Check SMTP settings.", "error");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Resend appointment email to already-approved applicants
+  const handleResendEmail = async (app: Applicant) => {
+    if (app.status !== "approved") return;
+    const confirmSend = window.confirm(`Resend appointment email to ${app.name} (${app.email})?`);
+    if (!confirmSend) return;
+
+    setActionLoading(true);
+    try {
+      const res = await fetch("/api/resend-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: app.id }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      addToast(`Appointment email resent to ${app.name}!`, "success");
+    } catch (err) {
+      console.error("Resend email error:", err);
+      addToast("Failed to resend email. Check SMTP settings.", "error");
     } finally {
       setActionLoading(false);
     }
@@ -572,7 +596,7 @@ We'll notify you once results are out. Stay tuned! 📩
                           <MessageSquare className="w-3.5 h-3.5" />
                         </button>
 
-                        {/* Email appointment order button (Only active if not sent yet - skips duplicate mails) */}
+                        {/* Email appointment order button / Resend for approved */}
                         {app.status !== "approved" ? (
                           <button
                             type="button"
@@ -584,14 +608,26 @@ We'll notify you once results are out. Stay tuned! 📩
                             <Mail className="w-3.5 h-3.5" />
                           </button>
                         ) : (
-                          /* PDF Download link for approved */
-                          <a
-                            href={`/api/download-letter?id=${app.id}`}
-                            className="p-2 rounded-lg bg-amber-500/10 hover:bg-amber-600 text-amber-400 hover:text-white transition-all border border-amber-500/20 cursor-pointer inline-flex items-center justify-center"
-                            title="Download PDF Letter"
-                          >
-                            <FileText className="w-3.5 h-3.5" />
-                          </a>
+                          <div className="flex items-center gap-2">
+                            {/* PDF Download */}
+                            <a
+                              href={`/api/download-letter?id=${app.id}`}
+                              className="p-2 rounded-lg bg-amber-500/10 hover:bg-amber-600 text-amber-400 hover:text-white transition-all border border-amber-500/20 cursor-pointer inline-flex items-center justify-center"
+                              title="Download PDF Letter"
+                            >
+                              <FileText className="w-3.5 h-3.5" />
+                            </a>
+                            {/* Resend Email */}
+                            <button
+                              type="button"
+                              onClick={() => handleResendEmail(app)}
+                              disabled={actionLoading}
+                              className="p-2 rounded-lg bg-indigo-500/10 hover:bg-indigo-600 text-indigo-400 hover:text-white transition-all border border-indigo-500/20 cursor-pointer disabled:opacity-50"
+                              title="Resend Appointment Email"
+                            >
+                              <MailCheck className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         )}
 
                         {/* Delete row */}
