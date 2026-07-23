@@ -325,24 +325,26 @@ export default function ApplicantTable({
     let message = "";
 
     if (app.status === "approved") {
-      message =
-`🎉 Congratulations *${app.name}*!
-
-You've been selected as *${role}* in *CSI KARE Student Branch* for 2026–2027! 🏆
-
-📄 Download your Appointment Letter:
-🔗 ${letterUrl}
-
-Welcome to the team! 🚀
-— *CSI KARE*`;
+      message = [
+        `\uD83C\uDF89 Congratulations *${app.name}*!`,
+        "",
+        `You've been selected as *${role}* in *CSI KARE Student Branch* for 2026\u20132027! \uD83C\uDFC6`,
+        "",
+        `\uD83D\uDCC4 Download your Appointment Letter:`,
+        `\uD83D\uDD17 ${letterUrl}`,
+        "",
+        `Welcome to the team! \uD83D\uDE80`,
+        `\u2014 *CSI KARE*`,
+      ].join("\n");
     } else {
-      message =
-`👋 Hi *${app.name}*!
-
-Your application to *CSI KARE Core Team 2026–2027* has been received ✅
-
-We'll notify you once results are out. Stay tuned! 📩
-— *CSI KARE*`;
+      message = [
+        `\uD83D\uDC4B Hi *${app.name}*!`,
+        "",
+        `Your application to *CSI KARE Core Team 2026\u20132027* has been received \u2705`,
+        "",
+        `We'll notify you once results are out. Stay tuned! \uD83D\uDCE9`,
+        `\u2014 *CSI KARE*`,
+      ].join("\n");
     }
 
     const link = `https://wa.me/91${app.phone}?text=${encodeURIComponent(message)}`;
