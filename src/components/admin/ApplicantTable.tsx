@@ -295,28 +295,35 @@ export default function ApplicantTable({
   };
 
   const handleSendWhatsApp = (app: Applicant) => {
+    const role = app.approvedRole || app.priority1 || "Core Team Member";
+    const letterUrl = `${window.location.origin}/api/download-letter?id=${app.id}`;
+
     let message = "";
+
     if (app.status === "approved") {
-      message = `Hello ${app.name} 👋,
+      message =
+`🎉 Congratulations *${app.name}*!
 
-Congratulations once again! You have been appointed as *${app.approvedRole || app.priority1}* in the *CSI KARE Student Branch* for the academic year 2026-2027.
+You've been selected as *${role}* in *CSI KARE Student Branch* for 2026–2027! 🏆
 
-You can download your official PDF Appointment Letter directly using the link below:
-${window.location.origin}/api/download-letter?id=${app.id}
+📄 Download your Appointment Letter:
+🔗 ${letterUrl}
 
-Regards,
-CSI KARE STUDENT BRANCH`;
+Welcome to the team! 🚀
+— *CSI KARE*`;
     } else {
-      message = `Hello ${app.name} 👋,
+      message =
+`👋 Hi *${app.name}*!
 
-Thank you for providing your student registry credentials. Your information has been successfully recorded in the *CSI KARE Database*.
+Your application to *CSI KARE Core Team 2026–2027* has been received ✅
 
-Regards,
-CSI KARE STUDENT BRANCH`;
+We'll notify you once results are out. Stay tuned! 📩
+— *CSI KARE*`;
     }
+
     const link = `https://wa.me/91${app.phone}?text=${encodeURIComponent(message)}`;
     window.open(link, "_blank");
-    addToast("Opening WhatsApp Web greeting...", "info");
+    addToast("Opening WhatsApp with pre-typed message...", "info");
   };
 
   const toggleSort = (field: keyof Applicant) => {

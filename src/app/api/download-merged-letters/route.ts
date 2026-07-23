@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Read Logo Base64
+    // Read Logo Base64 (logo.jpg — CSI KARE branch logo)
     let logoBase64 = "";
     try {
       const logoPath = path.join(process.cwd(), "public", "logo.jpg");
@@ -31,6 +31,17 @@ export async function GET(request: NextRequest) {
       }
     } catch (err) {
       console.error("PDF logo read failure:", err);
+    }
+
+    // Read Official CSI Logo Base64 (csi_off.png — official CSI emblem)
+    let csiOffBase64 = "";
+    try {
+      const csiOffPath = path.join(process.cwd(), "public", "csi_off.png");
+      if (fs.existsSync(csiOffPath)) {
+        csiOffBase64 = fs.readFileSync(csiOffPath).toString("base64");
+      }
+    } catch (err) {
+      console.error("PDF CSI official logo read failure:", err);
     }
 
     // Read Signature Base64
@@ -105,10 +116,10 @@ export async function GET(request: NextRequest) {
       doc.line(pageWidth - 9.5, pageHeight - 9.5, pageWidth - 9.5 - cl, pageHeight - 9.5);
       doc.line(pageWidth - 9.5, pageHeight - 9.5, pageWidth - 9.5, pageHeight - 9.5 - cl);
 
-      // 2. Centered CSI Watermark (Low Opacity)
+      // 2. Centered CSI Watermark (Subtle Opacity)
       if (logoBase64) {
         try {
-          const gState = new (doc as any).GState({ opacity: 0.02 });
+          const gState = new (doc as any).GState({ opacity: 0.07 });
           doc.saveGraphicsState();
           doc.setGState(gState);
           doc.addImage(`data:image/jpeg;base64,${logoBase64}`, "JPEG", (pageWidth - 120) / 2, (pageHeight - 120) / 2, 120, 120);
@@ -118,9 +129,19 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      // 3. Add Header Logo
+      // 3. ── Dual Logo Header ─────────────────────────────────────────
+      // Left logo: logo.jpg (CSI KARE branch logo)
+      // Right logo: csi_off.png (official CSI emblem)
+      // Both aligned to the 13–35 mm vertical band
+      const logoY = 13;
+      const logoW = 24;
+      const logoH = 22;
+
       if (logoBase64) {
-        doc.addImage(`data:image/jpeg;base64,${logoBase64}`, "JPEG", (pageWidth - 28) / 2, 15, 28, 20);
+        doc.addImage(`data:image/jpeg;base64,${logoBase64}`, "JPEG", 15, logoY, logoW, logoH);
+      }
+      if (csiOffBase64) {
+        doc.addImage(`data:image/png;base64,${csiOffBase64}`, "PNG", pageWidth - 15 - logoW, logoY, logoW, logoH);
       }
 
       // 4. Official Heading
