@@ -7,6 +7,7 @@ import {
   Database, 
   FileCheck,
   CheckSquare,
+  MailCheck,
   Loader2
 } from "lucide-react";
 import * as XLSX from "xlsx";
@@ -24,6 +25,7 @@ export default function ExportPanel({ allApplicants, filteredApplicants, selecte
   const { addToast } = useToast();
   const [scope, setScope] = useState<"filtered" | "all">("filtered");
   const [approving, setApproving] = useState(false);
+  const [resending, setResending] = useState(false);
 
   const formatDate = (timestamp: number | null) => {
     if (!timestamp) return "N/A";
@@ -172,6 +174,49 @@ export default function ExportPanel({ allApplicants, filteredApplicants, selecte
     }
   };
 
+  const handleResendAll = async () => {
+    const approvedAll = allApplicants.filter((app) => app.status === "approved");
+    if (approvedAll.length === 0) {
+      addToast("No approved applicants found to resend emails to.", "warning");
+      return;
+    }
+
+    const confirmAction = window.confirm(
+      `Resend appointment emails to ALL ${approvedAll.length} approved applicants?\nThis will resend the email to every approved candidate.`
+    );
+    if (!confirmAction) return;
+
+    setResending(true);
+    addToast(`Resending emails to ${approvedAll.length} approved applicants...`, "info");
+
+    let success = 0;
+    let failed = 0;
+
+    await Promise.allSettled(
+      approvedAll.map(async (app) => {
+        try {
+          const res = await fetch("/api/resend-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: app.id }),
+          });
+          if (res.ok) success++;
+          else failed++;
+        } catch {
+          failed++;
+        }
+      })
+    );
+
+    if (failed === 0) {
+      addToast(`✅ All ${success} emails resent successfully!`, "success");
+    } else {
+      addToast(`⚠️ ${success} sent, ${failed} failed. Check SMTP settings.`, "warning");
+    }
+
+    setResending(false);
+  };
+
   return (
     <div className="glass-panel p-5 border-white/5 flex flex-col lg:flex-row items-center justify-between gap-6 bg-slate-900/40 backdrop-blur-xl shadow-lg">
       
@@ -240,6 +285,24 @@ export default function ExportPanel({ allApplicants, filteredApplicants, selecte
               <CheckSquare className="w-4 h-4 text-blue-400" />
               <span>Approve & Email ({selectedIds.length})</span>
             </>
+          )}
+        </button>
+
+        {/* Resend All Emails */}
+        <button
+          onClick={handleResendAll}
+          disabled={resending || approving}
+          className={`flex-grow sm:flex-grow-0 py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all border cursor-pointer ${
+            !resending && !approving
+              ? "bg-gradient-to-r from-violet-700 to-purple-700 hover:from-violet-600 hover:to-purple-600 text-white border-violet-500/25 shadow-md shadow-purple-950/20"
+              : "bg-slate-900/10 border-white/5 text-slate-500 cursor-not-allowed opacity-50"
+          }`}
+          title="Resend appointment emails to all approved applicants"
+        >
+          {resending ? (
+            <><Loader2 className="w-4 h-4 animate-spin text-violet-400" /><span>Resending...</span></>
+          ) : (
+            <><MailCheck className="w-4 h-4 text-violet-400" /><span>Resend All Emails</span></>
           )}
         </button>
 
